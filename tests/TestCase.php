@@ -2,9 +2,9 @@
 
 namespace Ejunker\LaravelApiEvolution\Tests;
 
+use Ejunker\LaravelApiEvolution\LaravelApiEvolutionServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Ejunker\LaravelApiEvolution\LaravelApiEvolutionServiceProvider;
 
 class TestCase extends Orchestra
 {
