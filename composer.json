@@ -1,17 +1,18 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "ejunker/laravel-api-evolution",
+    "description": "Evolve your API while maintaining backwards compatibility. API versioning like Stripe.",
     "keywords": [
-        ":vendor_name",
+        "ejunker",
         "laravel",
-        ":package_slug"
+        "laravel-api-evolution",
+        "api",
+        "versioning"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/ejunker/laravel-api-evolution",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Eric Junker",
             "role": "Developer"
         }
     ],
@@ -30,18 +31,16 @@
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan-deprecation-rules": "^1.0",
         "phpstan/phpstan-phpunit": "^1.0",
-        "phpunit/phpunit": "^9.5",
-        "spatie/laravel-ray": "^1.26"
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories"
+            "Ejunker\\LaravelApiEvolution\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "Ejunker\\LaravelApiEvolution\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -51,15 +50,19 @@
         "format": "vendor/bin/pint"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Ejunker\\LaravelApiEvolution\\LaravelApiEvolutionServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "LaravelApiEvolution": "Ejunker\\LaravelApiEvolution\\Facades\\LaravelApiEvolution"
             }
         }
     },
