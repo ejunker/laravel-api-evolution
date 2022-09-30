@@ -2,10 +2,10 @@
 
 namespace Ejunker\LaravelApiEvolution;
 
+use Ejunker\LaravelApiEvolution\Commands\LaravelApiEvolutionCommand;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Ejunker\LaravelApiEvolution\Commands\LaravelApiEvolutionCommand;
 
 class LaravelApiEvolutionServiceProvider extends PackageServiceProvider
 {
@@ -21,7 +21,7 @@ class LaravelApiEvolutionServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasMigration('create_laravel-api-evolution_table')
             ->hasCommand(LaravelApiEvolutionCommand::class)
-            ->hasInstallCommand(function(InstallCommand $command) {
+            ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->publishConfigFile()
                     ->askToStarRepoOnGitHub('ejunker/laravel-api-evolution');
