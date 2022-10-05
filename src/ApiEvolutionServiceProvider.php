@@ -66,5 +66,7 @@ class ApiEvolutionServiceProvider extends PackageServiceProvider
                 return new VersionResolver($strategies);
             }
         );
+
+        $this->app->singleton(ApiEvolution::class);
     }
 }

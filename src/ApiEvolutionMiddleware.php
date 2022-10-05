@@ -30,14 +30,15 @@ class ApiEvolutionMiddleware
 
         $this->validateVersion($version);
 
-        $migrator = (new Migrator())
+        $apiEvolution = app(ApiEvolution::class)
             ->setRequest($request)
             ->setVersions($this->versions)
             ->setVersion($version);
 
-        return $migrator
+        return $apiEvolution
+            ->processBinds()
             ->processResponseMigrations(
-                $next($migrator->processRequestMigrations())
+                $next($apiEvolution->processRequestMigrations())
             )
             ->getResponse();
     }
