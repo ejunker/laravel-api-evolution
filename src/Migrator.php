@@ -92,7 +92,7 @@ class Migrator
 
     private function getMigrationsToRun(): Collection
     {
-        if (!$this->hasValidVersion()) {
+        if (! $this->hasValidVersion()) {
             return collect();
         }
 

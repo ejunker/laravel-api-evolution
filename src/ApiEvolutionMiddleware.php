@@ -64,11 +64,11 @@ class ApiEvolutionMiddleware
     }
 
     /**
-     * @param string $version
+     * @param  string  $version
      */
     protected function validateVersion(string $version): void
     {
-        if ($version && !$this->versions->keys()->contains($version)) {
+        if ($version && ! $this->versions->keys()->contains($version)) {
             $this->invalidVersion($version);
         }
     }
