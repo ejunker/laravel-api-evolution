@@ -28,8 +28,8 @@ php artisan api-evolution:install
 ## Usage
 
 ```php
-$laravelApiEvolution = new Ejunker\LaravelApiEvolution();
-echo $laravelApiEvolution->echoPhrase('Hello, Ejunker!');
+$apiEvolution = new Ejunker\ApiEvolution();
+echo $apiEvolution->echoPhrase('Hello, Ejunker!');
 ```
 
 ## Testing

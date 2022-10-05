@@ -2,7 +2,7 @@
 
 namespace Ejunker\LaravelApiEvolution\Tests;
 
-use Ejunker\LaravelApiEvolution\LaravelApiEvolutionServiceProvider;
+use Ejunker\LaravelApiEvolution\ApiEvolutionServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -20,7 +20,7 @@ class TestCase extends Orchestra
     protected function getPackageProviders($app)
     {
         return [
-            LaravelApiEvolutionServiceProvider::class,
+            ApiEvolutionServiceProvider::class,
         ];
     }
 

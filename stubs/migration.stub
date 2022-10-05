@@ -1,0 +1,48 @@
+<?php
+
+declare(strict_types=1);
+
+namespace DummyNamespace;
+
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Ejunker\LaravelApiEvolution\ApiMigration;
+
+class DummyClass extends ApiMigration
+{
+    public static string $description = '';
+
+    /**
+     * The route names that this migration should be applied to.
+     */
+    public function forRouteNames(): array
+    {
+        return [
+            'api.v1.users.index',
+        ];
+    }
+
+    /**
+     * Migrate up the request for the application to "read".
+     */
+    public function migrateRequest(Request $request): Request
+    {
+        //$input = $request->input();
+        //return $request->replace($input);
+
+        return $request;
+    }
+
+    /**
+     * Migrate down the response to display to the client.
+     * @throws \JsonException
+     */
+    public function migrateResponse(Response $response): Response
+    {
+        //return $this->mapJsonResponse($response, function (array $data) {
+        //    return $data;
+        //});
+
+        return $response;
+    }
+}

@@ -59,10 +59,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Ejunker\\LaravelApiEvolution\\LaravelApiEvolutionServiceProvider"
+                "Ejunker\\LaravelApiEvolution\\ApiEvolutionServiceProvider"
             ],
             "aliases": {
-                "LaravelApiEvolution": "Ejunker\\LaravelApiEvolution\\Facades\\LaravelApiEvolution"
+                "ApiEvolution": "Ejunker\\LaravelApiEvolution\\Facades\\ApiEvolution"
             }
         }
     },

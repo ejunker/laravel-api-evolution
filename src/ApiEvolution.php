@@ -2,6 +2,6 @@
 
 namespace Ejunker\LaravelApiEvolution;
 
-class LaravelApiEvolution
+class ApiEvolution
 {
 }
