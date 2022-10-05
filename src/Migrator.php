@@ -14,12 +14,12 @@ class Migrator
 
     protected Response $response;
 
-    private readonly Collection $versions;
+    private Collection $versions;
 
     /**
      * @var string desired version to migrate to
      */
-    private readonly string $version;
+    private string $version;
 
     private Collection $migrationsToRun;
 
