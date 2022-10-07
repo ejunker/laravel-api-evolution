@@ -5,36 +5,27 @@ declare(strict_types=1);
 namespace Ejunker\LaravelApiEvolution;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiEvolution
 {
-    protected Request $request;
+    private Request $request;
 
-    protected Response $response;
-
-    private Collection $versions;
+    private Response $response;
 
     /**
      * @var string desired version to migrate to
      */
     private string $version;
 
-    private Collection $versionsToRun;
-
-    private Collection $migrationsToRun;
+    public function __construct(
+        private readonly VersionCollection $versions,
+    ) {
+    }
 
     public function setRequest(Request $request): self
     {
         $this->request = $request;
-
-        return $this;
-    }
-
-    public function setVersions(Collection $versions): self
-    {
-        $this->versions = $versions;
 
         return $this;
     }
@@ -46,17 +37,30 @@ class ApiEvolution
         return $this;
     }
 
+    public function validateVersion(\Closure $callback): self
+    {
+        if ($this->version && ! $this->versions->keys()->contains($this->version)) {
+            $callback($this->version);
+        }
+
+        return $this;
+    }
+
     /**
      * @param  class-string  $migration
      */
     public function isActive(string $migration): bool
     {
-        return $this->getMigrationsToRun()->flatten()->contains($migration);
+        return $this->versions
+            ->getMigrationsToRun($this->version, $this->request)
+            ->flatten()
+            ->contains($migration);
     }
 
     public function processBinds(): self
     {
-        $this->getVersionsToRun()
+        $this->versions
+            ->getVersionsToRun($this->version)
             ->flatten()
             ->reverse()
             ->filter(fn ($bind) => $bind instanceof Bind)
@@ -69,32 +73,36 @@ class ApiEvolution
 
     public function processRequestMigrations(): Request
     {
-        $this->getMigrationsToRun()
+        return $this->versions
+            ->getMigrationsToRun($this->version, $this->request)
             ->flatten()
-            ->each(function ($migration) {
-                $this->request = (new $migration)->migrateRequest($this->request);
-            });
-
-        return $this->request;
+            ->reduce(
+                function ($carryRequest, $migration) {
+                    return (new $migration)->migrateRequest($carryRequest);
+                },
+                $this->request
+            );
     }
 
     public function processResponseMigrations(Response $response): ApiEvolution
     {
-        $this->response = $response;
-
-        $this->getMigrationsToRun()
+        $this->response = $this->versions
+            ->getMigrationsToRun($this->version, $this->request)
             ->reverse()
             ->flatten()
-            ->each(function ($migration) {
-                $this->response = (new $migration())->migrateResponse($this->response);
-            });
+            ->reduce(
+                function ($carryResponse, $migration) {
+                    return (new $migration())->migrateResponse($carryResponse);
+                },
+                $response
+            );
 
         return $this;
     }
 
     public function getResponse(): Response
     {
-        $latestVersion = $this->getLatestVersion();
+        $latestVersion = $this->versions->getLatestVersion();
 
         // version could be empty string if a version was not requested
         $version = $this->version ?: $latestVersion;
@@ -106,62 +114,5 @@ class ApiEvolution
         }
 
         return $this->response;
-    }
-
-    private function getLatestVersion(): string
-    {
-        return $this->versions->keys()->sort()->last();
-    }
-
-    private function getVersionsToRun(): Collection
-    {
-        if (! $this->hasValidVersion()) {
-            return collect();
-        }
-
-        if (! isset($this->versionsToRun)) {
-            $this->versionsToRun = $this->versions
-                ->filter(function ($versionMigrations, $version) {
-                    return $this->version < $version;
-                });
-        }
-
-        return $this->versionsToRun;
-    }
-
-    private function getMigrationsToRun(): Collection
-    {
-        if (! isset($this->migrationsToRun)) {
-            $this->migrationsToRun = $this->getVersionsToRun()
-                ->transform(function ($versionMigrations) {
-                    return $this->migrationsForVersion($versionMigrations);
-                });
-        }
-
-        return $this->migrationsToRun;
-    }
-
-    private function hasValidVersion(): bool
-    {
-        return $this->version && $this->versions->keys()->contains($this->version);
-    }
-
-    /**
-     * Get the applicable migrations for a version based on the request
-     */
-    private function migrationsForVersion(array $migrationClasses): Collection
-    {
-        return collect($migrationClasses)
-            ->filter(function ($migrationClass) {
-                // filter out Bind objects
-                if (! is_subclass_of($migrationClass, ApiMigration::class)) {
-                    return false;
-                }
-
-                /* @var ApiMigration $migration */
-                $migration = new $migrationClass();
-
-                return $migration->isApplicable($this->request);
-            });
     }
 }

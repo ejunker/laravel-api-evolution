@@ -67,6 +67,16 @@ class ApiEvolutionServiceProvider extends PackageServiceProvider
             }
         );
 
-        $this->app->singleton(ApiEvolution::class);
+        $this->app->singleton(VersionCollection::class, function (Container $container) {
+            $versions = collect(config('api-evolution.versions', []))->sortKeys();
+
+            return new VersionCollection($versions);
+        });
+
+        $this->app->singleton(ApiEvolution::class, function (Container $container) {
+            $versions = $container->get(VersionCollection::class);
+
+            return new ApiEvolution($versions);
+        });
     }
 }
