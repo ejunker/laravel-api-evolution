@@ -19,7 +19,7 @@ class ApiEvolutionMiddleware
 
     public function handle(Request $request, Closure $next): Response
     {
-        $version = $this->getVersion($request);
+        $version = $this->versionResolver->resolve($request) ?? '';
 
         $apiEvolution = app(ApiEvolution::class)
             ->setRequest($request)
@@ -32,19 +32,6 @@ class ApiEvolutionMiddleware
                 $next($apiEvolution->processRequestMigrations())
             )
             ->getResponse();
-    }
-
-    protected function getVersion(Request $request): string
-    {
-        return $this->versionResolver->resolve($request)
-            //?? $request->header('Api-Version')
-            //?? $request->query('api_version')
-            ?? $this->getDefaultVersion();
-    }
-
-    protected function getDefaultVersion(): string
-    {
-        return '';
     }
 
     protected function invalidVersion(string $version): void
