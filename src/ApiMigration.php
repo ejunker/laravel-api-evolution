@@ -9,14 +9,30 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class ApiMigration
 {
-    public static string $description;
-
     /**
      * The route names that this migration should be applied to.
      */
-    public function forRouteNames(): array
+    protected array $routeNames = [];
+
+    public string $description = '';
+
+    final public function __construct(array $routeNames = [], string $description = '')
     {
-        return [];
+        $this->routeNames = $routeNames ?: $this->routeNames;
+        $this->description = $description ?: $this->description;
+    }
+
+    /**
+     * Allow laravel to config:cache this class
+     */
+    public static function __set_state(array $array)
+    {
+        return new static(...array_values($array));
+    }
+
+    public function getRouteNames(): array
+    {
+        return $this->routeNames;
     }
 
     /**
@@ -24,7 +40,7 @@ abstract class ApiMigration
      */
     public function isApplicable(Request $request): bool
     {
-        return $request->routeIs($this->forRouteNames());
+        return $request->routeIs($this->routeNames);
     }
 
     /**

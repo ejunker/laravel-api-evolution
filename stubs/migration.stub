@@ -10,17 +10,9 @@ use Ejunker\LaravelApiEvolution\ApiMigration;
 
 class DummyClass extends ApiMigration
 {
-    public static string $description = '';
+    protected array $routeNames = [];
 
-    /**
-     * The route names that this migration should be applied to.
-     */
-    public function forRouteNames(): array
-    {
-        return [
-            'api.v1.users.index',
-        ];
-    }
+    public string $description = '';
 
     /**
      * Migrate up the request for the application to "read".

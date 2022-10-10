@@ -34,9 +34,8 @@ class VersionCollection extends Collection
 
         if (! isset($this->versionsToRun[$requestVersion])) {
             $this->versionsToRun[$requestVersion] = $this
-                ->filter(function ($versionMigrations, $version) use ($requestVersion) {
-                    return $requestVersion < $version;
-                });
+                ->filter(fn ($versionMigrations, $version) => $requestVersion < $version
+                );
         }
 
         return $this->versionsToRun[$requestVersion];
@@ -46,9 +45,8 @@ class VersionCollection extends Collection
     {
         if (! isset($this->migrationsToRun[$version])) {
             $this->migrationsToRun[$version] = $this->getVersionsToRun($version)
-                ->transform(function ($versionMigrations) use ($request) {
-                    return $this->migrationsForVersion($versionMigrations, $request);
-                });
+                ->transform(fn ($versionMigrations) => $this->migrationsForVersion($versionMigrations, $request)
+                );
         }
 
         return $this->migrationsToRun[$version];
@@ -61,17 +59,17 @@ class VersionCollection extends Collection
 
     /**
      * Get the applicable migrations for a version based on the request
+     *
+     * @return Collection<ApiMigration|Bind|object>
      */
-    private function migrationsForVersion(array $migrationClasses, Request $request): Collection
+    private function migrationsForVersion(array $migrations, Request $request): Collection
     {
-        return collect($migrationClasses)
-            ->filter(function ($migrationClass) use ($request) {
-                // filter out Bind objects
-                if (! is_subclass_of($migrationClass, ApiMigration::class)) {
-                    return false;
-                }
-
-                return (new $migrationClass())->isApplicable($request);
-            });
+        return collect($migrations)
+            // filter out Bind objects
+            ->filter(fn (string|ApiMigration $migration) => is_subclass_of($migration, ApiMigration::class))
+            // create instances
+            ->map(fn (string|ApiMigration $migration) => $migration instanceof ApiMigration ? $migration : new $migration())
+            // filter applicable
+            ->filter(fn (ApiMigration $migration) => $migration->isApplicable($request));
     }
 }

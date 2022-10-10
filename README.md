@@ -60,6 +60,7 @@ This package is based on the following:
 - https://github.com/tomschlick/request-migrations
 - https://github.com/lukepolo/laravel-api-migrations
 - https://github.com/ds-labs/laravel-redaktor
+- https://github.com/reindert-vetter/api-version-control
 
 ## License
 

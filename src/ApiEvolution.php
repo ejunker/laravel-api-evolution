@@ -47,14 +47,15 @@ class ApiEvolution
     }
 
     /**
-     * @param  class-string  $migration
+     * @param  class-string  $migrationClass
      */
-    public function isActive(string $migration): bool
+    public function isActive(string $migrationClass): bool
     {
         return $this->versions
             ->getMigrationsToRun($this->version, $this->request)
             ->flatten()
-            ->contains($migration);
+            ->contains(fn (ApiMigration $migration) => is_a($migration, $migrationClass)
+            );
     }
 
     public function processBinds(): self
@@ -77,9 +78,7 @@ class ApiEvolution
             ->getMigrationsToRun($this->version, $this->request)
             ->flatten()
             ->reduce(
-                function ($carryRequest, $migration) {
-                    return (new $migration)->migrateRequest($carryRequest);
-                },
+                fn (Request $carryRequest, ApiMigration $migration) => $migration->migrateRequest($carryRequest),
                 $this->request
             );
     }
@@ -91,9 +90,7 @@ class ApiEvolution
             ->reverse()
             ->flatten()
             ->reduce(
-                function ($carryResponse, $migration) {
-                    return (new $migration())->migrateResponse($carryResponse);
-                },
+                fn (Response $carryResponse, ApiMigration $migration) => $migration->migrateResponse($carryResponse),
                 $response
             );
 
@@ -110,6 +107,14 @@ class ApiEvolution
 
         if ($version !== $latestVersion) {
             $this->response->headers->set('Api-Version-Latest', $latestVersion);
+        }
+
+        // is deprecated if there are migrations or binds for this endpoint and version
+        $hasMigrations = $this->versions
+            ->getMigrationsToRun($this->version, $this->request)
+            ->flatten()
+            ->isNotEmpty();
+        if ($hasMigrations) {
             $this->response->headers->set('Deprecation', 'true');
         }
 
