@@ -45,8 +45,10 @@ class VersionCollection extends Collection
     {
         if (! isset($this->migrationsToRun[$version])) {
             $this->migrationsToRun[$version] = $this->getVersionsToRun($version)
-                ->transform(fn ($versionMigrations) => $this->migrationsForVersion($versionMigrations, $request)
-                );
+                ->transform(fn (array $versionMigrations) => $this->migrationsForVersion($versionMigrations, $request)
+                )
+                // filter out versions with no migrations
+                ->reject(fn (Collection $migrations) => $migrations->isEmpty());
         }
 
         return $this->migrationsToRun[$version];
@@ -66,7 +68,7 @@ class VersionCollection extends Collection
     {
         return collect($migrations)
             // filter out Bind objects
-            ->filter(fn (string|ApiMigration $migration) => is_subclass_of($migration, ApiMigration::class))
+            ->filter(fn (string|ApiMigration|Bind $migration) => is_subclass_of($migration, ApiMigration::class))
             // create instances
             ->map(fn (string|ApiMigration $migration) => $migration instanceof ApiMigration ? $migration : new $migration())
             // filter applicable

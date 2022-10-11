@@ -54,7 +54,8 @@ class ApiEvolution
         return $this->versions
             ->getMigrationsToRun($this->version, $this->request)
             ->flatten()
-            ->contains(fn (ApiMigration $migration) => is_a($migration, $migrationClass)
+            ->contains(
+                fn (ApiMigration $migration) => is_a($migration, $migrationClass)
             );
     }
 

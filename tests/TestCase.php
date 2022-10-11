@@ -33,4 +33,9 @@ class TestCase extends Orchestra
         $migration->up();
         */
     }
+
+    //public function defineRoutes($router)
+    //{
+    //    $router->get('/users')->name('users.index');
+    //}
 }
