@@ -25,12 +25,90 @@ You can run the installation command with:
 php artisan api-evolution:install
 ```
 
-## Usage
+The `api-evolution:install` command will create the `config/api-evolution.php` config file.
+
+You will need to add the middleware to your `api` middleware group in `app/Http/Kernel.php` or to the group/route that you want.
 
 ```php
-$apiEvolution = new Ejunker\ApiEvolution();
-echo $apiEvolution->echoPhrase('Hello, Ejunker!');
+'api' => [
+    // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+    'throttle:api',
+    \Illuminate\Routing\Middleware\SubstituteBindings::class,
+    \Ejunker\LaravelApiEvolution\ApiEvolutionMiddleware::class,
+],
 ```
+
+## Usage
+
+You can create an API migration using the command:
+
+```php
+php artisan make:api-migration FirstLastName
+```
+
+This will create the file `app/Http/Migrations/FirstLastName.php` that you can edit to make the necessary changes to the
+request and/or response. Then you need to add it to the `config/api-evolution.php` file so that it runs when an old version is requested.
+The migrations listed for a version are the migrations needed to make it match the previous version.
+
+## API Migrations
+
+Each API migration file has several properties and methods that you can use:
+- `routeNames` - an array of route names that this migration will run for. You can use wildcards such as `api.v1.users.*`
+- `isApplicable()` - if `routeNames` does not give you enough flexibility, you can use this method to determine if the migration should run based on the `Request`
+- `migrateRequest()` - allows you to modify the `Request` so that it is compatible with the newer version
+- `migrateResponse()` - allows you to modify the `Response` so that it is the older version that was requested
+
+In addition to `routeNames` and `isApplicable()`, you can also specify the route names for a migration in the config file.
+```php
+'versions' => [
+    '2022-10-10' => [
+        new \App\Http\Migrations\FirstLastName(['api.v1.users.show']),
+    ],
+
+    '2022-10-05' => [
+        // first version
+    ],
+],
+```
+
+## Binds
+
+While API Migrations allow you to modify the `Request` and `Response`, sometimes it may be easier to use an entirely different
+FormRequest, JsonResource, or response Transformer. In those cases you can use a `Bind` to bind a different version into the container.
+
+In the `config/api-evolution.php`
+```php
+'versions' => [
+    '2022-10-10' => [
+        \App\Http\Migrations\FirstLastName::class
+        new \Ejunker\LaravelApiEvolution\Bind(
+            \App\Transformers\UserTransformer::class,
+            \App\Transformers\UserTransformer_20221005::class,
+        ),
+    ],
+
+    '2022-10-05' => [
+        // first version
+    ],
+],
+```
+
+In this example, if the user requested the `2022-10-05` version it would apply the `Bind` which would bind the old
+version of the file into the container so that it would be used. If the user requested the latest version `2022-10-10`
+then the `Bind` would not run and the latest version of the file would be used.
+
+## Determine if a Migration Is Active
+
+If you need to modify things other than Request/Response such as modifying a SQL query based on the version then you can
+use `ApiEvolution::isActive()`.
+For example, to know if the `FirstLastName` migration is active: `ApiEvolution::isActive(FirstLastName::class)`
+
+## Response Headers
+
+Several headers are added to the response:
+- `API-Version` - the version requested or the latest version if no specific version is requested
+- `API-Version-Latest` - if the version requested is not the latest version then this header will be added
+- `Deprecated` - if there are migrations or Binds that run for this endpoint then this header will be added to indicate that there is a newer version of this endpoint
 
 ## Testing
 
@@ -57,10 +135,10 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 This package is based on the following:
 
-- https://github.com/tomschlick/request-migrations
-- https://github.com/lukepolo/laravel-api-migrations
-- https://github.com/ds-labs/laravel-redaktor
-- https://github.com/reindert-vetter/api-version-control
+- [tomschlick/request-migrations](https://github.com/tomschlick/request-migrations)
+- [lukepolo/laravel-api-migrations](https://github.com/lukepolo/laravel-api-migrations)
+- [ds-labs/laravel-redaktor](https://github.com/ds-labs/laravel-redaktor)
+- [reindert-vetter/api-version-control](https://github.com/reindert-vetter/api-version-control)
 
 ## License
 
