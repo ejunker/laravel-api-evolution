@@ -104,10 +104,10 @@ class ApiEvolution
 
         // version could be empty string if a version was not requested
         $version = $this->version ?: $latestVersion;
-        $this->response->headers->set('Api-Version', $version);
+        $this->response->headers->set('API-Version', $version);
 
         if ($version !== $latestVersion) {
-            $this->response->headers->set('Api-Version-Latest', $latestVersion);
+            $this->response->headers->set('API-Version-Latest', $latestVersion);
         }
 
         // is deprecated if there are migrations or binds for this endpoint and version
