@@ -12,6 +12,8 @@ class ApiMigrationMakeCommand extends GeneratorCommand
 
     protected $description = 'Create a new api migration';
 
+    protected $type = 'ApiMigration';
+
     public function handle()
     {
         parent::handle();
