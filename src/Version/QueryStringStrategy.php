@@ -11,7 +11,7 @@ final class QueryStringStrategy implements Strategy
     private string $name;
 
     /**
-     * @param  string  $name Name of the query string parameter to get the target version from.
+     * @param  string  $name  Name of the query string parameter to get the target version from.
      */
     public function __construct(string $name)
     {

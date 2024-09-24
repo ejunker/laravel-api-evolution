@@ -15,7 +15,7 @@ it('returns null if a version was not resolved', function () {
         new HeaderStrategy('API-Version'),
     ]);
 
-    expect($resolver->resolve(new Request()))->toBeNull();
+    expect($resolver->resolve(new Request))->toBeNull();
 });
 
 it('can run multiple version strategies', function () {

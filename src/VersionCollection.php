@@ -70,7 +70,7 @@ class VersionCollection extends Collection
             // filter out Bind objects
             ->filter(fn (string|ApiMigration|Bind $migration) => is_subclass_of($migration, ApiMigration::class))
             // create instances
-            ->map(fn (string|ApiMigration $migration) => $migration instanceof ApiMigration ? $migration : new $migration())
+            ->map(fn (string|ApiMigration $migration) => $migration instanceof ApiMigration ? $migration : new $migration)
             // filter applicable
             ->filter(fn (ApiMigration $migration) => $migration->isApplicable($request));
     }

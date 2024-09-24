@@ -5,7 +5,7 @@ use Ejunker\LaravelApiEvolution\Version\UnresolvedVersionException;
 use Illuminate\Http\Request;
 
 it('throws UnresolvedVersionException if key is not in query string', function () {
-    (new QueryStringStrategy('api_version'))->resolve(new Request());
+    (new QueryStringStrategy('api_version'))->resolve(new Request);
 })->throws(UnresolvedVersionException::class);
 
 it('returns correct version', function () {

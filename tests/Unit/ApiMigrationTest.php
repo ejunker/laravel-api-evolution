@@ -16,13 +16,13 @@ it('can create from config:cache state', function () {
 });
 
 it('can get route names', function () {
-    $migration = new FirstLastName();
+    $migration = new FirstLastName;
 
     expect($migration->getRouteNames())->toBe(['users.show', 'posts.*']);
 });
 
 it('can check if migration is applicable for the request', function () {
-    $migration = new FirstLastName();
+    $migration = new FirstLastName;
 
     expect($migration->isApplicable(getRequest('/users', 'GET', 'users.show')))->toBeTrue();
     expect($migration->isApplicable(getRequest('/home', 'GET', 'home.index')))->toBeFalse();
@@ -61,9 +61,7 @@ it('can migrate the response', function () {
 });
 
 it('does not modify request or response by default', function () {
-    $migration = new class extends ApiMigration
-    {
-    };
+    $migration = new class extends ApiMigration {};
 
     $request = getRequest('/posts', 'POST', 'posts.store')->replace([
         'headline' => 'here is some text',

@@ -14,8 +14,7 @@ class ApiEvolutionMiddleware
 {
     public function __construct(
         private readonly VersionResolver $versionResolver,
-    ) {
-    }
+    ) {}
 
     public function handle(Request $request, Closure $next): Response
     {

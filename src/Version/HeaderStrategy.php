@@ -11,7 +11,7 @@ final class HeaderStrategy implements Strategy
     private string $name;
 
     /**
-     * @param  string  $name Header name to get the target version from.
+     * @param  string  $name  Header name to get the target version from.
      */
     public function __construct(string $name)
     {

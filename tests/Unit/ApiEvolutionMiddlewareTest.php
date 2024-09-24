@@ -54,6 +54,6 @@ it('throws exception for invalid version', function () {
     $request = getRequest('/users', 'GET', 'users.show');
     $request->headers->set('Api-Version', 'invalid');
     $middleware->handle($request, function (Request $request) {
-        return new Response();
+        return new Response;
     });
 })->throws(HttpException::class);

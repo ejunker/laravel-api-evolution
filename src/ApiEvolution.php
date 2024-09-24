@@ -20,8 +20,7 @@ class ApiEvolution
 
     public function __construct(
         private readonly VersionCollection $versions,
-    ) {
-    }
+    ) {}
 
     public function setRequest(Request $request): self
     {

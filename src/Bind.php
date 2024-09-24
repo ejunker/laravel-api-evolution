@@ -13,8 +13,7 @@ class Bind
         private readonly string $abstract,
         private readonly \Closure|string|null $concrete,
         public readonly string $description = ''
-    ) {
-    }
+    ) {}
 
     public function handle(): void
     {
