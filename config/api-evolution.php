@@ -1,5 +1,8 @@
 <?php
 
+use Ejunker\LaravelApiEvolution\Version\HeaderStrategy;
+use Ejunker\LaravelApiEvolution\Version\QueryStringStrategy;
+
 return [
 
     /*
@@ -13,13 +16,13 @@ return [
 
     'strategies' => [
         [
-            'id' => \Ejunker\LaravelApiEvolution\Version\HeaderStrategy::class,
+            'id' => HeaderStrategy::class,
             'config' => [
                 'name' => 'API-Version',
             ],
         ],
         [
-            'id' => \Ejunker\LaravelApiEvolution\Version\QueryStringStrategy::class,
+            'id' => QueryStringStrategy::class,
             'config' => [
                 'name' => 'api_version',
             ],
